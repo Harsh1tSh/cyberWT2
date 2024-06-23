@@ -1,18 +1,8 @@
-CREATE TABLE voyages (
-    id INT,
-    event VARCHAR(50),
-    dateStamp INT,
-    timeStamp FLOAT,
-    voyage_From VARCHAR(50),
-    lat DECIMAL(9,6),
-    lon DECIMAL(9,6),
-    imo_num VARCHAR(20),
-    voyage_Id VARCHAR(20),
-    allocatedVoyageId VARCHAR(20)
-);
+CREATE EXTENSION IF NOT EXISTS cube;
+CREATE EXTENSION IF NOT EXISTS earthdistance;
 
-INSERT INTO voyages VALUES
-(1, 'SOSP', 43831, 0.708333, 'Port A', 34.0522, -118.2437, '9434761', '6', NULL),
-(2, 'EOSP', 43831, 0.791667, 'Port A', 34.0522, -118.2437, '9434761', '6', NULL),
-(3, 'SOSP', 43832, 0.333333, 'Port B', 36.7783, -119.4179, '9434761', '6', NULL),
-(4, 'EOSP', 43832, 0.583333, 'Port B', 36.7783, -119.4179, '9434761', '6', NULL);
+SELECT a.id, a.voyage_From as port, a.lat, a.lon, b.voyage_From as next_port, b.lat as next_lat, b.lon as next_lon,
+       earth_distance(ll_to_earth(a.lat, a.lon), ll_to_earth(b.lat, b.lon)) as distance_meters
+FROM voyages a
+JOIN voyages b ON a.imo_num = b.imo_num AND a.voyage_Id = b.voyage_Id AND b.id = a.id + 1
+WHERE a.allocatedVoyageId IS NULL AND b.allocatedVoyageId IS NULL;
