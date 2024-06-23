@@ -14,3 +14,8 @@ Run the scripts in the following order:
 2. `data_processing.py`: Processes the data and calculates distances and durations.
 3. `data_visualization.py`: Generates visual representations of the processed data.
 
+
+
+
+## Requires more modification and better approaches to handle multiple situations
+  
